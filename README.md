@@ -1,7 +1,4 @@
 # ads_algoritmos_e_programacao
-Projeto Para Alunos
-# DESCRIÇÃO PARA README DO GITHUB
-
 # Sistema Web de Lista de Compras
 # Sobre o Projeto
 
