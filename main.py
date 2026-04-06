@@ -1,73 +1,60 @@
-
-import peewee
-
-db = peewee.SqliteDatabase('shopping.db')
-
-class Usuario(peewee.Model):
-    email = peewee.CharField(unique=True)
-    senha = peewee.CharField()
-    
-    class Meta:
-        database = db
-
-db.connect()
-db.create_tables([Usuario])
-
+from shoppinglib.users import user_exists, create_user, get_user_password
 
 class App:
-
-    def validate_login(self, login, password):
-        try:
-            usuario = Usuario.get(Usuario.email == login)
-            return usuario.senha == password
-        except Usuario.DoesNotExist:
+    #def __init__(self): pass
+    def validate_login(self, email_digitado):
+        if user_exists(email_digitado): 
+            return True
+        else:
             return False
 
     def register(self):
-        print("Registrando novo usuário...")
-        email = input("Digite seu email:")
-        senha = input("Digite su senha:")
-        
-        if not email or not senha:
-            print("Email e senha são obrigatórios.")
-            return
-        try:
-            Usuario.create(email=email, senha=senha)
-            print("Usuário registrado com sucesso!")
-        except peewee.IntegrityError:
-            print("Erro ao registrar usuário.")
+        print("--- CADASTRO ---")
+        email: str = ""
+        while not email:
+            email = input("Digite seu email: ")
+            
+        if user_exists(email):
+            print("Erro: Este email já está cadastrado!")
+            email = ""
+        else:
+            senha = input("Crie uma senha: ")
+            create_user(email, senha)
+            print("Cadastro feito com sucesso!")
 
     def get_login(self):
-        print("faça login para acessar o sistema")
-        email = input("Digite seu email:")
-        senha = input("digite su senha:")
-        if self.validate_login(email, senha):
-            print("Login bem-sucedido!")
-        else:
-            print("Login falhou. Verifique suas credencias")
+        print("--- LOGIN ---")
+        email = input("Digite seu email: ")
+        senha_digitada = input("Digite sua senha: ")
 
+        if user_exists(email): 
+            senha_correta = get_user_password(email)
+            if senha_digitada == senha_correta:
+                print("Login feito com sucesso! Bem-vindo(a).")
+            else:
+                print("Erro: Senha incorreta.")
+        else:
+            print("Erro: Email não encontrado. Por favor, cadastre-se primeiro.")
 
     def start(self):
-         while True:
-            print("\n=== SISTEMA ===")
-            print("1. Cadastrar")
-            print("2. Login")
+        while True:
+            print("\n=== SISTEMA DE ACESSO ===")
+            print("1. Cadastrar novo usuário")
+            print("2. Fazer Login")
             print("3. Sair")
 
-            op = input("Escolha: ")
+            opcao = input("\nEscolha uma opção: ")
 
-            if op == "1":
+            if opcao == "1":
                 self.register()
-            elif op == "2":
+            elif opcao == "2":
                 self.get_login()
-            elif op == "3":
+            elif opcao == "3":
+                print("Indo embora...tchauu :D")
                 break
             else:
-                print("Opção inválida. Tente novamente.")
+                print("Opção inválida! Tente novamente.")
 
-
-app = App()
-app.start()
-
-
-
+if __name__ == "__main__":
+    app = App()
+    app.start()
