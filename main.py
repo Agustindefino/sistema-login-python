@@ -10,38 +10,24 @@ class App:
 
     def validate_login(self, login, password):
 
-        if not user_exists(login):
-            return False
-
-        saved_password = get_user_password(login)
-
-        return saved_password == password
+        pass
 
     def register_user(self, username, password):
 
-        if user_exists(username):
-            return False
-
-        create_user(username, password)
-
-        return True
+        pass
 
     def create_list(self, name, market):
 
-        return self.shopping.create_list(name, market)
+        pass
 
     def add_item(self, name, barcode, price, quantity):
 
-        return self.shopping.add_item(name, barcode, price, quantity)
+        pass
 
     def get_items(self):
 
-        return self.shopping.get_items()
+        pass
 
     def get_item_by_barcode(self, barcode):
-        items = self.get_items()
-        for item in items:
-            if item["barcode"] == barcode:
-                return item
-        return None
+        pass
 
