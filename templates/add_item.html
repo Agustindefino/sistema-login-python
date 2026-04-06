@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Adicionar Item</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+    <script src="https://unpkg.com/@ericblade/quagga2/dist/quagga.min.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Adicionar item</h2>
+
+    <form action="/add_item" method="post">
+
+        <input id="name" name="name" placeholder="Nome do item">
+
+        <input id="barcode" name="barcode" placeholder="Código de barras">
+
+        <input id="price" name="price" placeholder="Preço">
+
+        <input id="quantity" name="quantity" placeholder="Quantidade">
+
+        <button type="submit">Inserir item</button>
+
+    </form>
+
+    <br>
+
+    <button onclick="startScanner()">Ler código de barras</button>
+
+    <div id="scanner" style="margin-top:20px;"></div>
+
+    <br>
+
+    <a href="/items">Ver lista</a>
+
+</div>
+
+
+<script>
+
+async function buscarProduto(barcode){
+
+    try{
+
+        let response = await fetch("/get_item/" + barcode)
+
+        let data = await response.json()
+
+        if(data.name){
+            document.getElementById("name").value = data.name
+        }
+
+        if(data.price){
+            document.getElementById("price").value = data.price
+        }
+
+        if(data.quantity){
+            document.getElementById("quantity").value = data.quantity
+        }
+
+    }catch(error){
+
+        console.log("Erro ao buscar produto:", error)
+
+    }
+
+}
+
+
+function startScanner(){
+
+    Quagga.init({
+
+        inputStream: {
+            type: "LiveStream",
+            target: document.querySelector('#scanner'),
+            constraints: {
+            facingMode: "environment"
+           }
+    },
+
+    decoder: {
+        readers: ["ean_reader","ean_8_reader","code_128_reader"]
+    }
+
+    }, function(err){
+
+        if(err){
+            console.log(err)
+            return
+        }
+
+    Quagga.start()
+
+})
+
+Quagga.onDetected(function(data){
+
+    let code = data.codeResult.code
+
+    document.getElementById("barcode").value = code
+
+    buscarProduto(code)
+
+    Quagga.stop()
+
+    })
+
+}
+
+
+</script>
+
+</body>
+</html>
