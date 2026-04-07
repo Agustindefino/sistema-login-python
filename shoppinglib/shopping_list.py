@@ -57,7 +57,7 @@ class ShoppingListManager:
         items = []
 
         for entry in current_list.items:
-
+        
             item = entry.item
             price = entry.price
 
@@ -70,4 +70,22 @@ class ShoppingListManager:
             })
 
         return items
+    def get_item_by_barcode(self, barcode):
 
+        current_list = self.get_current_list()
+
+        if not current_list:
+            return None
+
+        for entry in current_list.items:
+
+            if entry.item.bar_code == barcode:
+
+                return {
+                "name": entry.item.name,
+                "barcode": entry.item.bar_code,
+                "quantity": entry.quantity,
+                "price": entry.price
+            }
+
+        return None
